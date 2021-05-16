@@ -19,3 +19,15 @@ One need an airtable account, or connect to one, and have a config.json, which m
 ```
 The table used is a simple table with to column: Name and Notes.
 [table overview](https://cdn.discordapp.com/attachments/813825488840949770/843452249153994752/unknown.png)
+
+## Command
+to use the bot, clone the project, fill the config.json with the necessary field, do a 
+```
+npm install 
+```
+for the dependencies
+
+and launch with
+```
+nodemon
+```
