@@ -1,4 +1,4 @@
-# crystal-bot
+# crystal-Codex
 
 A Discord bot that connects to an airtable grid.
 all the commands and their answer is on the airtable.
