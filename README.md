@@ -18,6 +18,8 @@ One need an [airtable](https://airtable.com/) account, or connect to one, and ha
 }
 ```
 The table used is a simple table with to column: Name and Notes.
+
+
 ![table overview](https://cdn.discordapp.com/attachments/813825488840949770/843452249153994752/unknown.png)
 
 ## Command
