@@ -5,7 +5,7 @@ all the commands and their answer is on the airtable.
 Useful for example to use the bot as a dictionnary.
 
 for the bot to work,
-One need an [airtable](https://airtable.com/) account, or connect to one, and have a config.json, which must be added to the project with the follow information:
+One need an [airtable](https://airtable.com/) account, or connect to one, and have a config.json, which must be added to the project with the following information:
 
 ```
 {
