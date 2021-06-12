@@ -54,5 +54,13 @@ client.on('message', message => {
         });
     }
 });
+
+// client.on('message', message => {
+// // Get the Guild and store it under the variable "list"
+// const list = client.guilds.cache.get("788402678853402624"); 
+
+// // Iterate through the collection of GuildMembers from the Guild getting the username property of each member 
+// list.members.cache.each(members => console.log(members))
+// });
 // login to Discord with your app's token
 client.login(token);
