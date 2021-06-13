@@ -1,11 +1,13 @@
 const Discord = require('discord.js');
 //const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName} = require('./config.json');
+//all process ar in heroku's config vars:
+//name are: PREFIX, TOKEN, AT_APIKEY, AT_BASEKEY, AT_TABLENAME
 // create a new Discord client
 const client = new Discord.Client();
 
 
 var Airtable = require('airtable');
-var base = new Airtable({apiKey: airtable_apiKey}).base(airtable_baseKey);
+var base = new Airtable({apiKey: process.env.AT_APIKEY}).base(process.env.AT_BASEKEY);
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
 client.once('ready', () => {
@@ -14,12 +16,12 @@ client.once('ready', () => {
 
 client.on('message', message => {
     //check the regex to prevent the bot from crashing if sending emoji
-    var test= `^\\${prefix}\\w+`
+    var test= `^\\${process.env.PREFIX}\\w+`
     var regex= new RegExp(test,'g')
     if (message.content.match(regex)) {
         //substracting the prefix so that it won't matter if it changes
         var msg=message.content.substring(1)
-        base(airtable_tableName).select({
+        base(process.env.AT_TABLENAME).select({
             filterByFormula: `{Name} = "${msg}"`,
             view: "Grid view"
         }).eachPage(function page(records, fetchNextPage) {
@@ -29,7 +31,7 @@ client.on('message', message => {
                 // /!\ will trigger only if a message match the database
                 // if there is no match, the bot won't respond
                 switch (message.content) {
-                    case `${prefix}tax`:
+                    case `${process.env.PREFIX}tax`:
                         message.channel.send(record.get('Notes'));
                         break;
                     default:
@@ -63,4 +65,4 @@ client.on('message', message => {
 // list.members.cache.each(members => console.log(members))
 // });
 // login to Discord with your app's token
-client.login(token);
+client.login(process.env.TOKEN);
