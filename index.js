@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName} = require('./config.json');
+//const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName} = require('./config.json');
 // create a new Discord client
 const client = new Discord.Client();
 
