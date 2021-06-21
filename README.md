@@ -3,6 +3,11 @@
 A Discord bot that connects to an airtable grid.
 all the commands and their answer is on the airtable.
 Useful for example to use the bot as a dictionnary.
+## example
+
+![example-response](https://media.discordapp.net/attachments/852586089276243968/856553484508594186/unknown.png)
+
+# Install
 
 for the bot to work,
 One need an [airtable](https://airtable.com/) account, or connect to one, and have a config.json, which must be added to the project with the following information:
