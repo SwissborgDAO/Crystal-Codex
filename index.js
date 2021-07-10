@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName} = require('./config.json');
+const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_aticle_languages,defaultlanguage} = require('./config.json');
 // create a new Discord client
 const client = new Discord.Client();
 
@@ -18,9 +18,35 @@ client.on('message', message => {
     var regex= new RegExp(test,'g')
     if (message.content.match(regex)) {
         //substracting the prefix so that it won't matter if it changes
+            
         var msg=message.content.substring(1)
+        
+        var splittedMessage = msg.split(" ")
+
+        var lang = defaultlanguage
+        var articleLang = defaultlanguage
+
+        if(splittedMessage.length >= 2){
+            if(supported_languages.includes(splittedMessage[1])){
+                lang = splittedMessage[1]
+            }
+            if(supported_aticle_languages.includes(lang)){
+                articleLang = lang
+            }
+        }
+
+        var informations = ""
+
+        switch (lang){
+            case "FR": informations = "Si vous voulez plus d'informations : "; break;
+            case "DE": informations = " : "; break;
+            case "SP": informations = " : "; break;
+
+            default: informations = "If you want more informations : "; break;
+        }
+
         base(airtable_tableName).select({
-            filterByFormula: `{Name} = "${msg}"`,
+            filterByFormula: `{Trigger} = "${splittedMessage[0]}"`,
             view: "Grid view"
         }).eachPage(function page(records, fetchNextPage) {
             // This function (`page`) will get called for each page of records.
@@ -28,16 +54,39 @@ client.on('message', message => {
             records.forEach(function(record) {
                 // /!\ will trigger only if a message match the database
                 // if there is no match, the bot won't respond
+
+                var messageSend = ""
+                
+                if(record.get(lang) == undefined){
+                    messageSend = record.get(defaultlanguage)
+                }else{
+                    messageSend = record.get(lang)
+                }
+
+                var articleLink = record.get("Article Link")
+                var articleInformations = ""
+
+                if(articleLink == undefined){
+                    articleInformations = ""
+                }else{
+                    if(articleLink.substring(0,22) == "https://swissborg.com/" && lang==articleLang && lang !="EN") {
+                        articleLink = articleLink.substring(0,22) + lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
+                    }
+
+                    articleInformations = "\n" + informations + articleLink
+                }
+                
+
                 switch (message.content) {
                     case `${prefix}tax`:
-                        message.channel.send(record.get('Notes'));
+                        message.channel.send(record.get(lang));
                         break;
                     default:
                         var embedMsg = new Discord.MessageEmbed()
                         .setColor('#18227c')
                         .setAuthor('Crystal Codex', 'https://media.discordapp.net/attachments/838525490641371176/841784583505838080/CN.png')
                         .addFields(
-                            {name:record.get('Name'),value:record.get('Notes')}
+                            {name:record.get('Trigger'),value:messageSend + articleInformations}
                             )
                         message.channel.send(embedMsg)
                         
