@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_aticle_languages,defaultlanguage} = require('./config.json');
+const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage} = require('./config.json');
 // create a new Discord client
 const client = new Discord.Client();
 
@@ -27,10 +27,10 @@ client.on('message', message => {
         var articleLang = defaultlanguage
 
         if(splittedMessage.length >= 2){
-            if(supported_languages.includes(splittedMessage[1])){
-                lang = splittedMessage[1]
+            if(supported_languages.includes(splittedMessage[1].toUpperCase())){
+                lang = splittedMessage[1].toUpperCase()
             }
-            if(supported_aticle_languages.includes(lang)){
+            if(supported_article_languages.includes(lang)){
                 articleLang = lang
             }
         }
@@ -39,14 +39,14 @@ client.on('message', message => {
 
         switch (lang){
             case "FR": informations = "Si vous voulez plus d'informations : "; break;
-            case "DE": informations = " : "; break;
-            case "SP": informations = " : "; break;
+            case "DE": informations = "Wenn sie mehr informationen wünschen : "; break;
+            case "SP": informations = "Si desea más información : "; break;
 
             default: informations = "If you want more informations : "; break;
         }
 
         base(airtable_tableName).select({
-            filterByFormula: `{Trigger} = "${splittedMessage[0]}"`,
+            filterByFormula: `LOWER({Trigger}) = "${splittedMessage[0].toLowerCase()}"`,
             view: "Grid view"
         }).eachPage(function page(records, fetchNextPage) {
             // This function (`page`) will get called for each page of records.
@@ -59,6 +59,15 @@ client.on('message', message => {
                 
                 if(record.get(lang) == undefined){
                     messageSend = record.get(defaultlanguage)
+                    if (messageSend == undefined){
+                        switch (lang){
+                            case "FR": messageSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
+                            case "DE": messageSend = "Leider sind für diesen trigger keine daten verfügbar, bitte kontaktieren sie einen moderator für diesen fehler."; break;
+                            case "SP": messageSend = "Lo sentimos, no hay datos disponibles para este disparador, por favor, póngase en contacto con un moderador para este error."; break;
+                            
+                            default: messageSend = "Sorry, no data available for this trigger, please contact a moderator for this mistake."; break;
+                        }
+                    }
                 }else{
                     messageSend = record.get(lang)
                 }
