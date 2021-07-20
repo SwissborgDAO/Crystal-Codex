@@ -20,6 +20,8 @@ client.on('message', message => {
         //substracting the prefix so that it won't matter if it changes
             
         var msg=message.content.substring(1)
+
+        var validLanguage = true
         
         var splittedMessage = msg.split(" ")
 
@@ -29,6 +31,8 @@ client.on('message', message => {
         if(splittedMessage.length >= 2){
             if(supported_languages.includes(splittedMessage[1].toUpperCase())){
                 lang = splittedMessage[1].toUpperCase()
+            }else{
+                validLanguage = false
             }
             if(supported_article_languages.includes(lang)){
                 articleLang = lang
@@ -56,34 +60,42 @@ client.on('message', message => {
                 // if there is no match, the bot won't respond
 
                 var messageSend = ""
-                
-                if(record.get(lang) == undefined){
-                    messageSend = record.get(defaultlanguage)
-                    if (messageSend == undefined){
-                        switch (lang){
-                            case "FR": messageSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
-                            case "DE": messageSend = "Leider sind für diesen trigger keine daten verfügbar, bitte kontaktieren sie einen moderator für diesen fehler."; break;
-                            case "SP": messageSend = "Lo sentimos, no hay datos disponibles para este disparador, por favor, póngase en contacto con un moderador para este error."; break;
-                            
-                            default: messageSend = "Sorry, no data available for this trigger, please contact a moderator for this mistake."; break;
-                        }
-                    }
-                }else{
-                    messageSend = record.get(lang)
-                }
-
-                var articleLink = record.get("Article Link")
                 var articleInformations = ""
 
-                if(articleLink == undefined){
-                    articleInformations = ""
-                }else{
-                    if(articleLink.substring(0,22) == "https://swissborg.com/" && lang==articleLang && lang !="EN") {
-                        articleLink = articleLink.substring(0,22) + lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
+                if(validLanguage){
+                    if(record.get(lang) == undefined){
+                        messageSend = record.get(defaultlanguage)
+                        if (messageSend == undefined){
+                            switch (lang){
+                                case "FR": messageSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
+                                case "DE": messageSend = "Leider sind für diesen trigger keine daten verfügbar, bitte kontaktieren sie einen moderator für diesen fehler."; break;
+                                case "SP": messageSend = "Lo sentimos, no hay datos disponibles para este disparador, por favor, póngase en contacto con un moderador para este error."; break;
+                                
+                                default: messageSend = "Sorry, no data available for this trigger, please contact a moderator for this mistake."; break;
+                            }
+                        }
+                    }else{
+                        messageSend = record.get(lang)
                     }
-
-                    articleInformations = "\n" + informations + articleLink
+    
+                    var articleLink = record.get("Article Link")
+                    
+    
+                    if(articleLink == undefined){
+                        articleInformations = ""
+                    }else{
+                        if(articleLink.substring(0,22) == "https://swissborg.com/" && lang==articleLang && lang !="EN") {
+                            articleLink = articleLink.substring(0,22) + lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
+                        }
+                        articleInformations = "\n" + informations + articleLink
+                    }
+                }else{
+                    messageSend = "Unvailable language value, supported languages : "
+                    for (let i = 0; i < supported_languages.length; i++){
+                        messageSend += supported_languages[i] + "; "
+                    }
                 }
+                
                 
 
                 switch (message.content) {
