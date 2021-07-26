@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage} = require('./config.json');
+const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
 // create a new Discord client
 const client = new Discord.Client();
-
+const functions = require('./functions.js');
 
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: airtable_apiKey}).base(airtable_baseKey);
@@ -18,110 +18,140 @@ client.on('message', message => {
     var regex= new RegExp(test,'g')
     if (message.content.match(regex)) {
         //substracting the prefix so that it won't matter if it changes
-            
-        var msg=message.content.substring(1)
+        var values = functions.hello(message) //Get trigger, lang, article lang and if it's valid language
+        var messageToSend = "*"
 
-        var validLanguage = true
-        
-        var splittedMessage = msg.split(" ")
+        if(!values.values.validLanguage){ //Not valid language
+            messageToSend = functions.ifNotValidLanguage()
+            var embedMsg = functions.createEmbedMessage(message, values, messageToSend);
+            message.channel.send(embedMsg)
+        }
+        else if(values.trigger.toLowerCase() == allListTrigger){ //All Triggers
 
-        var lang = defaultlanguage
-        var articleLang = defaultlanguage
+            var hasNonAdminRole = true
+            for(let i = 0; i<adminsID.length; i++){
+                if(message.member.roles.cache.has(adminsID[i])){
+                    hasNonAdminRole = false
+                    break
+                }
+            }
 
-        if(splittedMessage.length >= 2){
-            if(supported_languages.includes(splittedMessage[1].toUpperCase())){
-                lang = splittedMessage[1].toUpperCase()
+            if(hasNonAdminRole){
+                switch (values.values.lang){
+                    case "FR": messageToSend = "Votre rôle ne permet pas d'utiliser cette commande !"; break;
+                    case "DE": messageToSend = "Ihre Rolle erlaubt Ihnen nicht, diesen Befehl zu verwenden !"; break;
+                    case "SP": messageToSend = "¡Tu rol no te permite usar este comando !"; break;
+                                    
+                    default: messageToSend = "Your role does not allow you to use this command !"; break;
+                }
+
+                var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                    message.channel.send(embedMsg)
+            }else if(!(FAQChannelID.includes(message.channel.id))){
+                switch (values.values.lang){
+                    case "FR": messageToSend = "Ce channel ne permet pas l'utilisation de cette commande !"; break;
+                    case "DE": messageToSend = "Dieser Kanal erlaubt die Verwendung dieses Befehls nicht !"; break;
+                    case "SP": messageToSend = "¡Este canal no permite el uso de este comando !"; break;
+                                    
+                    default: messageToSend = "This channel does not allow the use of this command !"; break;
+                }
+
+                var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                    message.channel.send(embedMsg)
             }else{
-                validLanguage = false
-            }
-            if(supported_article_languages.includes(lang)){
-                articleLang = lang
-            }
-        }
-
-        var informations = ""
-
-        switch (lang){
-            case "FR": informations = "Si vous voulez plus d'informations : "; break;
-            case "DE": informations = "Wenn sie mehr informationen wünschen : "; break;
-            case "SP": informations = "Si desea más información : "; break;
-
-            default: informations = "If you want more informations : "; break;
-        }
-
-        base(airtable_tableName).select({
-            filterByFormula: `LOWER({Trigger}) = "${splittedMessage[0].toLowerCase()}"`,
-            view: "Grid view"
-        }).eachPage(function page(records, fetchNextPage) {
-            // This function (`page`) will get called for each page of records.
+                base(airtable_tableName).select({
+                    view: "Grid view"
+                }).eachPage(function page(records, fetchNextPage) {
+                    // This function (`page`) will get called for each page of records.
+                    records.forEach(function(record) {
+                        // /!\ will trigger only if a message match the database
+                        // if there is no match, the bot won't respond
+    
+                        if(record.get("Trigger") != undefined){
+                            values.trigger = record.get("Trigger")
+                            messageToSend = record.get(values.values.lang)
+                            messageToSend += "\n" + record.get("Article Link")
         
-            records.forEach(function(record) {
-                // /!\ will trigger only if a message match the database
-                // if there is no match, the bot won't respond
+                            var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                            message.channel.send(embedMsg)
+                        }
+                    }
+                    
+                );
+                // To fetch the next page of records, call `fetchNextPage`.
+                // If there are more records, `page` will get called again.
+                // If there are no more records, `done` will get called.
+                    fetchNextPage();
+                }, function done(err) {
+                if (err) {console.log(console.error(err)); return; }
+                });
+            }
+        }
+        else{
 
-                var messageSend = ""
-                var articleInformations = ""
+            base(airtable_tableName).select({
+                filterByFormula: `LOWER({Trigger}) = "${values.trigger.toLowerCase()}"`,
+                view: "Grid view"
+            }).eachPage(function page(records, fetchNextPage) {
+                // This function (`page`) will get called for each page of records.
+                records.forEach(function(record) {
+                    // /!\ will trigger only if a message match the database
+                    // if there is no match, the bot won't respond
 
-                if(validLanguage){
-                    if(record.get(lang) == undefined){
-                        messageSend = record.get(defaultlanguage)
-                        if (messageSend == undefined){
-                            switch (lang){
-                                case "FR": messageSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
-                                case "DE": messageSend = "Leider sind für diesen trigger keine daten verfügbar, bitte kontaktieren sie einen moderator für diesen fehler."; break;
-                                case "SP": messageSend = "Lo sentimos, no hay datos disponibles para este disparador, por favor, póngase en contacto con un moderador para este error."; break;
-                                
-                                default: messageSend = "Sorry, no data available for this trigger, please contact a moderator for this mistake."; break;
+                    var articleInformations = ""
+                    
+                    if(record.get(values.values.lang) == undefined){
+                        messageToSend = record.get(defaultlanguage)
+                        if (messageToSend == undefined){
+                            switch (values.values.lang){
+                                case "FR": messageToSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
+                                case "DE": messageToSend = "Leider sind für diesen trigger keine daten verfügbar, bitte kontaktieren sie einen moderator für diesen fehler."; break;
+                                case "SP": messageToSend = "Lo sentimos, no hay datos disponibles para este disparador, por favor, póngase en contacto con un moderador para este error."; break;
+                                    
+                                default: messageToSend = "Sorry, no data available for this trigger, please contact a moderator for this mistake."; break;
                             }
                         }
                     }else{
-                        messageSend = record.get(lang)
+                        messageToSend = record.get(values.values.lang)
                     }
-    
+        
                     var articleLink = record.get("Article Link")
-                    
-    
+                        
                     if(articleLink == undefined){
                         articleInformations = ""
                     }else{
-                        if(articleLink.substring(0,22) == "https://swissborg.com/" && lang==articleLang && lang !="EN") {
-                            articleLink = articleLink.substring(0,22) + lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
+                        var informations = ""
+                        
+                        switch (values.values.lang){
+                            case "FR": informations = "Si vous voulez plus d'informations : "; break;
+                            case "DE": informations = "Wenn sie mehr informationen wünschen : "; break;
+                            case "SP": informations = "Si desea más información : "; break;
+                
+                            default: informations = "If you want more informations : "; break;
+                        }
+
+                        if(articleLink.substring(0,22) == "https://swissborg.com/" && values.values.lang==values.values.articleLang && values.values.lang !="EN") {
+                            articleLink = articleLink.substring(0,22) + values.values.lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
                         }
                         articleInformations = "\n" + informations + articleLink
                     }
-                }else{
-                    messageSend = "Unvailable language value, supported languages : "
-                    for (let i = 0; i < supported_languages.length; i++){
-                        messageSend += supported_languages[i] + "; "
-                    }
+                    messageToSend += articleInformations
+                    var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                    message.channel.send(embedMsg)
                 }
                 
-                
+            );
+            // To fetch the next page of records, call `fetchNextPage`.
+            // If there are more records, `page` will get called again.
+            // If there are no more records, `done` will get called.
+                fetchNextPage();
+            }, function done(err) {
+            if (err) {console.log(console.error(err)); return; }
+            });
 
-                switch (message.content) {
-                    case `${prefix}tax`:
-                        message.channel.send(record.get(lang));
-                        break;
-                    default:
-                        var embedMsg = new Discord.MessageEmbed()
-                        .setColor('#18227c')
-                        .setAuthor('Crystal Codex', 'https://media.discordapp.net/attachments/838525490641371176/841784583505838080/CN.png')
-                        .addFields(
-                            {name:record.get('Trigger'),value:messageSend + articleInformations}
-                            )
-                        message.channel.send(embedMsg)
-                        
-                        break;
-                    }
-                });
-    
-        // To fetch the next page of records, call `fetchNextPage`.
-        // If there are more records, `page` will get called again.
-        // If there are no more records, `done` will get called.
-            fetchNextPage();
-        }, function done(err) {
-        if (err) { console.error(err); return; }
-        });
+        }
+        
+
     }
 });
 
