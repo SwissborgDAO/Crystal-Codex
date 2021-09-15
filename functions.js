@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
+//const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
 
 function hello(messageReceived){
     var msg=messageReceived.content.substring(1).split(" ")
@@ -11,22 +11,22 @@ function hello(messageReceived){
 }
 
 function langUsages(message, msg){
-    var lang = defaultlanguage
-    var articleLang = defaultlanguage
+    var lang = process.env.defaultlanguage
+    var articleLang = process.env.defaultlanguage
     var validLanguage = true
 
-    if(ENChannelID.includes(message.channel.id)){lang = "EN"}
-    if(FRChannelID.includes(message.channel.id)){lang = "FR"}
-    if(DEChannelID.includes(message.channel.id)){lang = "DE"}
-    if(SPChannelID.includes(message.channel.id)){lang = "SP"}
+    if(process.env.ENChannelID.includes(message.channel.id)){lang = "EN"}
+    if(process.env.FRChannelID.includes(message.channel.id)){lang = "FR"}
+    if(process.env.DEChannelID.includes(message.channel.id)){lang = "DE"}
+    if(process.env.SPChannelID.includes(message.channel.id)){lang = "SP"}
 
     if(msg.length >= 2){
-        if(supported_languages.includes(msg[1].toUpperCase())){
+        if(process.env.supported_languages.includes(msg[1].toUpperCase())){
             lang = msg[1].toUpperCase()
         }else{
             validLanguage = false
         }
-        if(supported_article_languages.includes(lang)){
+        if(process.env.supported_article_languages.includes(lang)){
             articleLang = lang
         }
     }
@@ -36,15 +36,15 @@ function langUsages(message, msg){
 
 function ifNotValidLanguage(){
     message = "Unvailable language value, supported languages : "
-        for (let i = 0; i < supported_languages.length; i++){
-            message += supported_languages[i] + "; "
+        for (let i = 0; i < process.env.supported_languages.length; i++){
+            message += process.env.supported_languages[i] + "; "
         }
     return message
 }
 
 function createEmbedMessage(message, values, messageToSend){
     switch (message.content) {
-        case `${prefix}tax`:
+        case `${process.env.prefix}tax`:
             message.channel.send(record.get(values.values.lang));
             break;
         default:
