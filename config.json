@@ -1,0 +1,11 @@
+{
+	"prefix": process.env.prefix,
+	"token": process.env.token,
+    "airtable_baseKey":process.env.airtable_baseKey,
+    "airtable_tableName":process.env.airtable_tableName,
+    "airtable_apiKey":process.env.airtable_apiKey,
+    "supported_languages":process.env.supported_languages,
+    "supported_article_languages":process.env.supported_article_languages,
+    "defaultlanguage":process.env.defaultlanguage
+
+}
