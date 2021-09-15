@@ -163,4 +163,4 @@ client.on('message', message => {
 // list.members.cache.each(members => console.log(members))
 // });
 // login to Discord with your app's token
-client.login(token);
+client.login(process.env.token);
