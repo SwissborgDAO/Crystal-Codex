@@ -1,11 +1,11 @@
 const Discord = require('discord.js');
-const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
+//const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
 // create a new Discord client
 const client = new Discord.Client();
 const functions = require('./functions.js');
 
 var Airtable = require('airtable');
-var base = new Airtable({apiKey: airtable_apiKey}).base(airtable_baseKey);
+var base = new Airtable({apiKey: process.env.airtable_apiKey}).base(process.env.airtable_baseKey);
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
 client.once('ready', () => {
@@ -14,7 +14,7 @@ client.once('ready', () => {
 
 client.on('message', message => {
     //check the regex to prevent the bot from crashing if sending emoji
-    var test= `^\\${prefix}\\w+`
+    var test= `^\\${process.env.prefix}\\w+`
     var regex= new RegExp(test,'g')
     if (message.content.match(regex)) {
         //substracting the prefix so that it won't matter if it changes
@@ -26,11 +26,11 @@ client.on('message', message => {
             var embedMsg = functions.createEmbedMessage(message, values, messageToSend);
             message.channel.send(embedMsg)
         }
-        else if(values.trigger.toLowerCase() == allListTrigger){ //All Triggers
+        else if(values.trigger.toLowerCase() == process.env.allListTrigger){ //All Triggers
 
             var hasNonAdminRole = true
-            for(let i = 0; i<adminsID.length; i++){
-                if(message.member.roles.cache.has(adminsID[i])){
+            for(let i = 0; i<process.env.adminsID.length; i++){
+                if(message.member.roles.cache.has(process.env.adminsID[i])){
                     hasNonAdminRole = false
                     break
                 }
@@ -47,7 +47,7 @@ client.on('message', message => {
 
                 var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
                     message.channel.send(embedMsg)
-            }else if(!(FAQChannelID.includes(message.channel.id))){
+            }else if(!(process.env.FAQChannelID.includes(message.channel.id))){
                 switch (values.values.lang){
                     case "FR": messageToSend = "Ce channel ne permet pas l'utilisation de cette commande !"; break;
                     case "DE": messageToSend = "Dieser Kanal erlaubt die Verwendung dieses Befehls nicht !"; break;
@@ -59,7 +59,7 @@ client.on('message', message => {
                 var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
                     message.channel.send(embedMsg)
             }else{
-                base(airtable_tableName).select({
+                base(process.env.airtable_tableName).select({
                     view: "Grid view"
                 }).eachPage(function page(records, fetchNextPage) {
                     // This function (`page`) will get called for each page of records.
@@ -89,7 +89,7 @@ client.on('message', message => {
         }
         else{
 
-            base(airtable_tableName).select({
+            base(process.env.airtable_tableName).select({
                 filterByFormula: `LOWER({Trigger}) = "${values.trigger.toLowerCase()}"`,
                 view: "Grid view"
             }).eachPage(function page(records, fetchNextPage) {
@@ -101,7 +101,7 @@ client.on('message', message => {
                     var articleInformations = ""
                     
                     if(record.get(values.values.lang) == undefined){
-                        messageToSend = record.get(defaultlanguage)
+                        messageToSend = record.get(process.env.defaultlanguage)
                         if (messageToSend == undefined){
                             switch (values.values.lang){
                                 case "FR": messageToSend = "Désolé, il n'y a pas de données disponibles pour ce trigger, veuillez contacter un modérateur pour cette erreur"; break;
