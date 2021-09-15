@@ -30,6 +30,7 @@ client.on('message', message => {
 
             var hasNonAdminRole = true
             for(let i = 0; i<process.env.adminsID.length; i++){
+		    console.log(process.env.adminsID);
                 if(message.member.roles.cache.has(process.env.adminsID[i])){
                     hasNonAdminRole = false
                     break
