@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-//const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
+//const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./.json');
 // create a new Discord client
 const client = new Discord.Client();
-const functions = require('./functions.js');
+const functions = require('functions.js');
 
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: process.env.airtable_apiKey}).base(process.env.airtable_baseKey);
