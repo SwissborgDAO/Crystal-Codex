@@ -49,8 +49,8 @@ function createEmbedMessage(message, values, messageToSend){
             break;
         default:
             var embedMsg = new Discord.MessageEmbed()
-            .setColor('#18227c')
-            .setAuthor('Crystal Codex', 'https://media.discordapp.net/attachments/838525490641371176/841784583505838080/CN.png')
+            .setColor('#01c38d')
+            .setAuthor('SwissBorg', 'https://cdn.discordapp.com/attachments/766745098326507560/887956978821914634/App-Icon.png')
             .addFields(
                 {name:values.trigger,value:messageToSend}
                 )
