@@ -71,6 +71,7 @@ client.on('message', message => {
                             questionLang="Question "+values.values.lang
                             values.question = record.get(questionLang)
                             values.trigger = record.get("Trigger")
+				console.log(values)
                             messageToSend = record.get(values.values.lang)
                             messageToSend += "\n" + record.get("Article Link")
         
