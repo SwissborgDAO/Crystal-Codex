@@ -6,8 +6,8 @@ function hello(messageReceived){
 
     var values = langUsages(messageReceived, msg)
     var trigger = msg[0]
-
-    return {trigger, values};
+    var question=""
+    return {trigger, values,question};
 }
 
 function langUsages(message, msg){
@@ -52,7 +52,7 @@ function createEmbedMessage(message, values, messageToSend){
             .setColor('#01c38d')
             .setAuthor('SwissBorg', 'https://cdn.discordapp.com/attachments/766745098326507560/887956978821914634/App-Icon.png')
             .addFields(
-                {name:values.trigger,value:messageToSend}
+                {name:values.question,value:messageToSend}
                 )
             break;
     }
