@@ -6,8 +6,7 @@ function hello(messageReceived){
 
     var values = langUsages(messageReceived, msg)
     var trigger = msg[0]
-    var question=""
-    return {trigger, values,question};
+    return {trigger, values};
 }
 
 function langUsages(message, msg){
@@ -42,7 +41,7 @@ function ifNotValidLanguage(){
     return message
 }
 
-function createEmbedMessage(message, values, messageToSend){
+function createEmbedMessage(message, values, messageToSend,question){
     switch (message.content) {
         case `${process.env.prefix}tax`:
             message.channel.send(record.get(values.values.lang));
@@ -52,7 +51,7 @@ function createEmbedMessage(message, values, messageToSend){
             .setColor('#01c38d')
             .setAuthor('SwissBorg', 'https://cdn.discordapp.com/attachments/766745098326507560/887956978821914634/App-Icon.png')
             .addFields(
-                {name:values.question,value:messageToSend}
+                {name:question,value:messageToSend}
                 )
             break;
     }

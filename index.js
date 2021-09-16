@@ -69,13 +69,13 @@ client.on('message', message => {
     
                         if(record.get("Trigger") != undefined){
                             questionLang="Question"+values.values.lang
-                            values.question = record.get(questionLang)
+                            var question = record.get(questionLang)
                             values.trigger = record.get("Trigger")
-				console.log(values)
+                            console.log(question)
                             messageToSend = record.get(values.values.lang)
                             messageToSend += "\n" + record.get("Article Link")
                             
-                            var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                            var embedMsg = functions.createEmbedMessage(message, values, messageToSend,question)
                             message.channel.send(embedMsg)
                         }
                     }
