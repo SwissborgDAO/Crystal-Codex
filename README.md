@@ -10,14 +10,23 @@ One need an [airtable](https://airtable.com/) account, or connect to one, and ha
 ```
 {
 	"prefix": "DESIRED PREFIX",
+	"allListTrigger": "DESIRED TRIGGER TO SHOW ALL COMMAND LIST",
 	"token": "YOUR-DISCORD-TOKEN",
     	"airtable_baseKey":"BASE-KEY",
     	"airtable_tableName":"NAME-OF-THE-TABLE",
-    	"airtable_apiKey":"APIKEY"
-
+    	"airtable_apiKey":"APIKEY"	
+	"supported_languages": ["LANGUAGE 1","LANGUAGE 2"],
+	"supported_article_languages": ["LANGUAGE 1", "LANGUAGE 2"],
+	"defaultlanguage": "DEFAULT LANGUAGE",
+	"adminsID": ["ADMIN ID 1", "ADMIN ID 2"],
+	"FAQChannelID": ["FAQ DISCORD CHANNEL ID 1", "FAQ DISCORD CHANNEL ID 2"],
+	"ENChannelID": ["EN DISCORD DISCORD CHANNEL ID 1", "EN DISCORD CHANNEL ID 2"],
+	"FRChannelID": ["FR DISCORD CHANNEL ID 1", "FR DISCORD CHANNEL ID 2"],
+	"DEChannelID": ["DE DISCORD CHANNEL ID 1", "DE DISCORD CHANNEL ID 2"],
+	"SPChannelID": ["SP DISCORD CHANNEL ID 1", "SP DISCORD CHANNEL ID 2"]
 }
 ```
-The table used is a simple table with to column: Name and Notes.
+The table used is a simple table with columns: Trigger, Article Link and language columns (EN, FR, DE, SP).
 
 
 ![table overview](https://cdn.discordapp.com/attachments/813825488840949770/843452249153994752/unknown.png)
