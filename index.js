@@ -1,11 +1,14 @@
-require('dotenv').config()
+//require('dotenv').config()
 const Discord = require('discord.js');
-//const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./.json');
+//const {prefix,token,airtable_apiKey,airtable_baseKey,airtable_tableName} = require('./config.json');
+//all process ar in heroku's config vars:
+//name are: PREFIX, TOKEN, AT_APIKEY, AT_BASEKEY, AT_TABLENAME
 // create a new Discord client
 const client = new Discord.Client();
 const functions = require('./functions.js');
 
 var Airtable = require('airtable');
+
 var base = new Airtable({apiKey: process.env.airtable_apiKey}).base(process.env.airtable_baseKey);
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -166,4 +169,6 @@ client.on('message', message => {
 // list.members.cache.each(members => console.log(members))
 // });
 // login to Discord with your app's token
+
 client.login(process.env.token);
+
