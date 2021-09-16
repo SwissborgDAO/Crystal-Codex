@@ -1,3 +1,4 @@
+//require('dotenv').config()
 const Discord = require('discord.js');
 //const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./config.json');
 
@@ -6,7 +7,8 @@ function hello(messageReceived){
 
     var values = langUsages(messageReceived, msg)
     var trigger = msg[0]
-    return {trigger, values};
+    var question=""
+    return {trigger, values,question};
 }
 
 function langUsages(message, msg){
@@ -51,7 +53,7 @@ function createEmbedMessage(message, values, messageToSend,question){
             .setColor('#01c38d')
             .setAuthor('SwissBorg', 'https://cdn.discordapp.com/attachments/766745098326507560/887956978821914634/App-Icon.png')
             .addFields(
-                {name:question,value:messageToSend}
+                {name:values.question,value:messageToSend}
                 )
             break;
     }

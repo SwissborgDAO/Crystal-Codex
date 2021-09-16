@@ -1,3 +1,4 @@
+require('dotenv').config()
 const Discord = require('discord.js');
 //const {prefix,allListTrigger,token,airtable_apiKey,airtable_baseKey,airtable_tableName,supported_languages,supported_article_languages,defaultlanguage,adminsID,FAQChannelID,ENChannelID,FRChannelID,DEChannelID,SPChannelID} = require('./.json');
 // create a new Discord client
@@ -68,13 +69,10 @@ client.on('message', message => {
                         // if there is no match, the bot won't respond
     
                         if(record.get("Trigger") != undefined){
-                            var questionLang="Question"+values.values.lang
-                            var question = record.get(questionLang)
                             values.trigger = record.get("Trigger")
                             messageToSend = record.get(values.values.lang)
                             messageToSend += "\n" + record.get("Article Link")
-                            
-                            var embedMsg = functions.createEmbedMessage(message, values, messageToSend,question="QuestionFR")
+                            var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
                             message.channel.send(embedMsg)
                         }
                     }
@@ -138,7 +136,10 @@ client.on('message', message => {
                         articleInformations = "\n" + informations + articleLink
                     }
                     messageToSend += articleInformations
+                    var questionLang="Question"+values.values.lang
+                            values.question = record.get(questionLang)
                     var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
+                    console.log(values);
                     message.channel.send(embedMsg)
                 }
                 
