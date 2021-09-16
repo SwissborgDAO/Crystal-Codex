@@ -68,12 +68,12 @@ client.on('message', message => {
                         // if there is no match, the bot won't respond
     
                         if(record.get("Trigger") != undefined){
-                            questionLang="Question "+values.values.lang
+                            questionLang="Question"+values.values.lang
                             values.question = record.get(questionLang)
                             values.trigger = record.get("Trigger")
                             messageToSend = record.get(values.values.lang)
                             messageToSend += "\n" + record.get("Article Link")
-        
+                            
                             var embedMsg = functions.createEmbedMessage(message, values, messageToSend)
                             message.channel.send(embedMsg)
                         }
