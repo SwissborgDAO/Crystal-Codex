@@ -27,10 +27,7 @@ client.on('message', message => {
 
         if(!values.values.validLanguage){ //Not valid language
             messageToSend = functions.ifNotValidLanguage()
-		
-		console.log(messageToSend)
-		
-            var embedMsg = functions.createEmbedMessage(message, values, messageToSend);
+            var embedMsg = functions.createEmbedMessage(message, values, messageToSend,"Error : Language not suported !");
             message.channel.send(embedMsg)
         }
         else if(values.trigger.toLowerCase() == process.env.allListTrigger){ //All Triggers
