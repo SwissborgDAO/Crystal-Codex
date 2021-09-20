@@ -30,6 +30,10 @@ function langUsages(message, msg){
         if(process.env.supported_article_languages.includes(lang)){
             articleLang = lang
         }
+    }else{
+        if(process.env.supported_article_languages.includes(lang)){
+            articleLang = lang
+        }
     }
 
     return {lang, articleLang, validLanguage};
