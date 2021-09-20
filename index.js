@@ -119,6 +119,8 @@ client.on('message', message => {
                     }
         
                     var articleLink = record.get("Article Link")
+		    
+		    console.log(values.values.lang)
                         
                     if(articleLink == undefined){
                         articleInformations = ""
