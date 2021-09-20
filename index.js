@@ -27,6 +27,9 @@ client.on('message', message => {
 
         if(!values.values.validLanguage){ //Not valid language
             messageToSend = functions.ifNotValidLanguage()
+		
+		console.log(messageToSend)
+		
             var embedMsg = functions.createEmbedMessage(message, values, messageToSend);
             message.channel.send(embedMsg)
         }
@@ -132,10 +135,6 @@ client.on('message', message => {
                 
                             default: informations = "If you want more informations : "; break;
                         }
-			
-			console.log(articleLink.substring(0,22) == "https://swissborg.com/")
-			    console.log(values.values.lang==values.values.articleLang)
-			    console.log(values.values.lang !="EN")
 			
                         if(articleLink.substring(0,22) == "https://swissborg.com/" && values.values.lang==values.values.articleLang && values.values.lang !="EN") {
                             articleLink = articleLink.substring(0,22) + values.values.lang.toLowerCase() + "/" + articleLink.substring(22,articleLink.length)
