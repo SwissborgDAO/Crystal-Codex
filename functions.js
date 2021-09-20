@@ -40,10 +40,7 @@ function langUsages(message, msg){
 }
 
 function ifNotValidLanguage(){
-    message = "Unvailable language value, supported languages : "
-        for (let i = 0; i < process.env.supported_languages.length; i++){
-            message += process.env.supported_languages[i] + "; "
-        }
+    message = "Unvailable language value, supported languages : " + process.env.supported_languages
     return message
 }
 
